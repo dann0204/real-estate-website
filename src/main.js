@@ -54,8 +54,8 @@ const propertyCard = p => `
 const articleCard = a => `<article class="journal-card"><a class="journal-image" href="${articleUrl(a.id)}"><img src="${safe(a.image)}" alt="" loading="lazy"></a><div class="journal-meta"><span>${safe(a.category)}</span><span>${safe(a.date)}</span></div><h3><a href="${articleUrl(a.id)}">${safe(a.title)}</a></h3><p>${safe(a.excerpt)}</p><a class="read-more" href="${articleUrl(a.id)}">Read story ↗</a></article>`;
 function bindGlobal(){
   const toggle=$(".menu-toggle"), nav=$(".main-nav");
-  toggle?.addEventListener("click",()=>{const open=nav.classList.toggle("is-open");toggle.setAttribute("aria-expanded",String(open));toggle.innerHTML=icon(open?"close":"menu",22);});
-  nav?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>nav.classList.remove("is-open")));
+  if(toggle && !toggle.dataset.bound){toggle.dataset.bound="true";toggle.addEventListener("click",()=>{const open=nav.classList.toggle("is-open");toggle.setAttribute("aria-expanded",String(open));toggle.innerHTML=icon(open?"close":"menu",22);});}
+  if(nav && !nav.dataset.bound){nav.dataset.bound="true";nav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>nav.classList.remove("is-open")));}
   document.querySelectorAll("[data-favorite]").forEach(btn=>btn.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();const id=Number(btn.dataset.favorite);favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];saveStore("haven-favorites",favorites);renderCurrent();}));
   document.querySelectorAll("[data-compare]").forEach(input=>input.addEventListener("change",()=>{const id=Number(input.dataset.compare);if(input.checked){if(compared.length>=3){input.checked=false;alert("You can compare up to 3 properties.");return;}if(!compared.includes(id))compared.push(id);}else compared=compared.filter(x=>x!==id);saveStore("haven-compare",compared);updateCompareBar();}));
   document.querySelectorAll("[data-remove-compare]").forEach(btn=>btn.addEventListener("click",()=>{compared=compared.filter(x=>x!==Number(btn.dataset.removeCompare));saveStore("haven-compare",compared);renderCurrent();}));
